@@ -41,6 +41,9 @@ frontend/lerna-debug.log*
 backend/**/bin/
 backend/**/obj/
 
+# User-specific ASP.NET Core settings
+appsettings.Development.json
+
 # Test results
 backend/**/TestResults/
 
