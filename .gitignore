@@ -1,0 +1,90 @@
+# ============================================
+# General
+# ============================================
+
+.DS_Store
+Thumbs.db
+*.log
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# ASP.NET local settings
+appsettings.Local.json
+appsettings.*.Local.json
+
+# User secrets
+secrets.json
+
+# ============================================
+# Frontend - Node / React / Vite
+# ============================================
+
+node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+
+# Frontend package manager logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# ============================================
+# Backend - .NET / C#
+# ============================================
+
+backend/**/bin/
+backend/**/obj/
+
+# Test results
+backend/**/TestResults/
+
+# ============================================
+# Visual Studio / VS Code generated files
+# ============================================
+
+.vs/
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ============================================
+# Visual Studio project files
+# ============================================
+
+*.ntvs*
+*.njsproj
+*.sln
+
+# ============================================
+# MongoDB / local database files
+# ============================================
+
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================
+# Temporary files
+# ============================================
+
+*.tmp
+*.temp
+*.sw?
+
+# ============================================
+# Personal financial data
+# ============================================
+
+*.csv
