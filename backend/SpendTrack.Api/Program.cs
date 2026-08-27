@@ -1,10 +1,18 @@
+using SpendTrack.Api.Data;
+using SpendTrack.Api.Repositories;
+using SpendTrack.Api.Services;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
+
+builder.Services.AddSingleton<MongoDbContext>();
+
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 builder.Services.AddCors(options =>
 {
@@ -19,7 +27,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
