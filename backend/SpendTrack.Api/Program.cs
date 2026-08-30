@@ -13,6 +13,7 @@ builder.Services.AddSingleton<MongoDbContext>();
 
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<CsvParsingService>();
 
 builder.Services.AddCors(options =>
 {

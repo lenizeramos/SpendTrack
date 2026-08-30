@@ -9,10 +9,8 @@ import {
   Title,
   Alert,
 } from "@mantine/core";
-import {
-  useTestQuery,
-  useAddTransactionMutation,
-} from "./services/api";
+import { useTestQuery, useAddTransactionMutation } from "./services/api";
+import { FileUpload } from "./components/FileUpload";
 
 function App() {
   const {
@@ -83,10 +81,7 @@ function App() {
                 onChange={(e) => setDescription(e.currentTarget.value)}
               />
 
-              <Button
-                type="submit"
-                loading={isLoading}
-              >
+              <Button type="submit" loading={isLoading}>
                 Add Transaction
               </Button>
             </Stack>
@@ -108,6 +103,14 @@ function App() {
             </Stack>
           </Paper>
         )}
+
+        <Title order={2}>Import Transactions</Title>
+
+        <FileUpload
+          onUploadSuccess={() => {
+            console.log("CSV uploaded successfully");
+          }}
+        />
       </Stack>
     </Container>
   );

@@ -21,5 +21,11 @@ namespace SpendTrack.Api.Services
 
             return await _repository.AddAsync(transaction);
         }
+
+        public async Task ImportTransactionsAsync(
+            IEnumerable<Transaction> transactions)
+        {
+            await _repository.AddManyAsync(transactions);
+        }
     }
 }

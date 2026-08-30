@@ -10,6 +10,7 @@ export const api = createApi({
     test: builder.query<string, void>({
       query: () => "transactions/test",
     }),
+
     addTransaction: builder.mutation<Transaction, CreateTransactionRequest >({
       query: (body) => ({
         url: "transactions",
@@ -17,7 +18,20 @@ export const api = createApi({
         body,
       }),
     }),
+
+    uploadTransactions: builder.mutation<any, File>({
+      query: (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        return {
+          url: "transactions/upload",
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
   }),
 });
 
-export const { useTestQuery, useAddTransactionMutation } = api;
+export const { useTestQuery, useAddTransactionMutation, useUploadTransactionsMutation, } = api;
