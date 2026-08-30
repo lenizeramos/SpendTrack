@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { CreateTransactionRequest, Transaction } from "../types/transaction";
 
 export const api = createApi({
   reducerPath: "api",
@@ -9,7 +10,14 @@ export const api = createApi({
     test: builder.query<string, void>({
       query: () => "transactions/test",
     }),
+    addTransaction: builder.mutation<Transaction, CreateTransactionRequest >({
+      query: (body) => ({
+        url: "transactions",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useTestQuery } = api;
+export const { useTestQuery, useAddTransactionMutation } = api;

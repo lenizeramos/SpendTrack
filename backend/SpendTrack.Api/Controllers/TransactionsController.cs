@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SpendTrack.Api.Services;
+using SpendTrack.Api.DTOs;
 
 namespace SpendTrack.Api.Controllers
 {
@@ -20,9 +21,9 @@ namespace SpendTrack.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddTransaction()
+        public async Task<IActionResult> AddTransaction([FromBody] CreateTransactionRequest request)
         {
-            var transaction = await _service.AddTransactionAsync("Hello World");
+            var transaction = await _service.AddTransactionAsync(request.Description);
 
             return Ok(transaction);
         }
