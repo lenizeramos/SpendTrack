@@ -7,5 +7,8 @@ namespace SpendTrack.Api.Repositories
         Task<Transaction> AddAsync(Transaction transaction);
         Task AddManyAsync(IEnumerable<Transaction> transactions);
         Task<List<Transaction>> GetAllAsync();
+
+        Task<HashSet<string>> GetExistingSourceRowHashesAsync(
+       IEnumerable<string> hashes);
     }
 }

@@ -1,7 +1,7 @@
 using SpendTrack.Api.Data;
 using SpendTrack.Api.Repositories;
 using SpendTrack.Api.Services;
-
+using SpendTrack.Api.Services.Csv;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +11,11 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton<MongoDbContext>();
 
+builder.Services.AddSingleton<IBankCsvParser, TdCsvParser>();
+
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<CsvParsingService>();
+builder.Services.AddScoped<ICsvParsingService, CsvParsingService>();
 
 builder.Services.AddCors(options =>
 {

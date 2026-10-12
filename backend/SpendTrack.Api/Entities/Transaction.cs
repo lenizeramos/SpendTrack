@@ -11,5 +11,14 @@ namespace SpendTrack.Api.Entities
         public DateTime Date { get; set; }
         public string Description { get; set; } = string.Empty;
         public decimal Amount { get; set; }
+        public string? Notes { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        public string? SourceBank { get; set; }
+        public int? ParserVersion { get; set; }
+        public bool LowConfidence { get; set; }
+        public string? SourceRowHash { get; set; }
     }
 }

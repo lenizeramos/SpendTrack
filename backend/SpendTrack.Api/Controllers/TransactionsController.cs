@@ -9,9 +9,9 @@ namespace SpendTrack.Api.Controllers
     public class TransactionsController : ControllerBase
     {
         private readonly ITransactionService _service;
-        private readonly CsvParsingService _csvParser;
+        private readonly ICsvParsingService _csvParser;
 
-        public TransactionsController(ITransactionService service, CsvParsingService csvParser)
+        public TransactionsController(ITransactionService service, ICsvParsingService csvParser)
         {
             _service = service;
             _csvParser = csvParser;
@@ -40,8 +40,8 @@ namespace SpendTrack.Api.Controllers
             {
                 using var stream = file.OpenReadStream();
 
-                var transactions =
-                    _csvParser.ParseBankCsv(stream);
+                var parseResult = _csvParser.ParseBankCsv(stream);
+                var transactions = parseResult.Transactions;
 
                 if (transactions.Count == 0)
                     return BadRequest("The CSV file contains no transactions.");
