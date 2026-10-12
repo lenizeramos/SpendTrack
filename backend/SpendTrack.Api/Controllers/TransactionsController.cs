@@ -31,7 +31,7 @@ namespace SpendTrack.Api.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadCsv(IFormFile file)
+        public async Task<IActionResult> UploadCsv(IFormFile file, [FromForm] bool confirmImport = false, [FromForm] List<int>? excludedIndexes = null)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
@@ -46,20 +46,25 @@ namespace SpendTrack.Api.Controllers
                 if (transactions.Count == 0)
                     return BadRequest("The CSV file contains no transactions.");
 
-                await _service.ImportTransactionsAsync(transactions);
+                var result = await _service.ImportTransactionsAsync(transactions, confirmImport, excludedIndexes);
 
-                return Ok(new
-                {
-                    Message = "Transactions successfully imported!",
-                    Count = transactions.Count
-                });
+                if (result.RequiresConfirmation)
+                    return Conflict(result);
+
+                return Ok(result);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(new
                 {
-                    Message = "Failed to import CSV.",
-                    Error = ex.Message
+                    Message = ex.Message
+                });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new
+                {
+                    Message = "Failed to import CSV."
                 });
             }
         }

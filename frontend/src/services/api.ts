@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { CreateTransactionRequest, Transaction } from "../types/transaction";
+import type { CreateTransactionRequest, UploadTransactionsRequest, ImportTransactionsResult, Transaction } from "../types/transaction";
 
 export const api = createApi({
   reducerPath: "api",
@@ -19,10 +19,16 @@ export const api = createApi({
       }),
     }),
 
-    uploadTransactions: builder.mutation<any, File>({
-      query: (file) => {
+    uploadTransactions: builder.mutation<ImportTransactionsResult, UploadTransactionsRequest>({
+      query: ({file, confirmImport = false, excludedIndexes = []}) => {
         const formData = new FormData();
+
         formData.append("file", file);
+        formData.append("confirmImport", String(confirmImport));
+
+        excludedIndexes.forEach((index) => {
+          formData.append("excludedIndexes", String(index));
+        });
 
         return {
           url: "transactions/upload",

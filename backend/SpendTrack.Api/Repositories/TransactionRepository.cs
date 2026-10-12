@@ -28,5 +28,10 @@ namespace SpendTrack.Api.Repositories
 
             await _transactions.InsertManyAsync(transactionList);
         }
+
+        public async Task<List<Transaction>> GetAllAsync()
+        {
+            return await _transactions.Find(FilterDefinition<Transaction>.Empty).ToListAsync();
+        }
     }
 }

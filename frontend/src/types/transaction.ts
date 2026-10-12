@@ -9,3 +9,24 @@ export type Transaction = {
 export type CreateTransactionRequest = {
   description: string;
 };
+
+export type ImportTransactionsResult = {
+  requiresConfirmation: boolean;
+  message: string;
+  duplicates: DuplicateTransaction[];
+  importedCount: number;
+  skippedCount: number;
+  totalCount: number;
+};
+
+export type DuplicateTransaction = {
+  index: number;
+  transaction: Transaction;
+  reason: string;
+};
+
+export type UploadTransactionsRequest = {
+  file: File;
+  confirmImport?: boolean;
+  excludedIndexes?: number[];
+};

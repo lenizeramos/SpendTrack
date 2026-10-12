@@ -1,10 +1,12 @@
 using SpendTrack.Api.Entities;
+using SpendTrack.Api.DTOs;
 
 namespace SpendTrack.Api.Services
 {
     public interface ITransactionService
     {
         Task<Transaction> AddTransactionAsync(string description);
-        Task ImportTransactionsAsync(IEnumerable<Transaction> transactions);
+        Task<ImportTransactionsResult> ImportTransactionsAsync(IEnumerable<Transaction> transactions,
+            bool confirmImport = false, List<int>? excludedIndexes = null);
     }
 }
