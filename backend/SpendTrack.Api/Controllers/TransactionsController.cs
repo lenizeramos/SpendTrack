@@ -71,5 +71,32 @@ namespace SpendTrack.Api.Controllers
                 });
             }
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTransaction(string id, [FromBody] UpdateTransactionRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Description))
+                return BadRequest(new { Message = "Description is required." });
+
+            var updated = await _service.UpdateTransactionAsync(
+                id,
+                request.Description.Trim());
+
+            if (updated is null)
+                return NotFound(new { Message = "Transaction not found." });
+
+            return Ok(updated);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTransaction(string id)
+        {
+            var deleted = await _service.DeleteTransactionAsync(id);
+
+            if (!deleted)
+                return NotFound(new { Message = "Transaction not found." });
+
+            return NoContent();
+        }
     }
 }

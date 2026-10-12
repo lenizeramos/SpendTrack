@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type {
   CreateTransactionRequest,
+  UpdateTransactionRequest,
   UploadTransactionsRequest,
   ImportTransactionsResult,
   Transaction,
@@ -24,6 +25,24 @@ export const api = createApi({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["Transaction"],
+    }),
+
+    updateTransaction: builder.mutation<Transaction, UpdateTransactionRequest>({
+      query: ({ id, ...body }) => ({
+        url: `transactions/${id}`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["Transaction"],
+    }),
+
+    deleteTransaction: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `transactions/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Transaction"],
     }),
 
     uploadTransactions: builder.mutation<
@@ -46,6 +65,7 @@ export const api = createApi({
           body: formData,
         };
       },
+      invalidatesTags: ["Transaction"],
     }),
   }),
 });
@@ -53,5 +73,7 @@ export const api = createApi({
 export const {
   useGetTransactionsQuery,
   useAddTransactionMutation,
+  useUpdateTransactionMutation,
+  useDeleteTransactionMutation,
   useUploadTransactionsMutation,
 } = api;

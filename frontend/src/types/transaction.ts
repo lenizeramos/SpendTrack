@@ -18,6 +18,11 @@ export type CreateTransactionRequest = {
   description: string;
 };
 
+export type UpdateTransactionRequest = {
+  id: string;
+  description: string;
+};
+
 export type ImportTransactionsResult = {
   requiresConfirmation: boolean;
   message: string;

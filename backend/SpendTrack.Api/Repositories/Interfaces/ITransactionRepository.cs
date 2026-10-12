@@ -10,5 +10,8 @@ namespace SpendTrack.Api.Repositories
 
         Task<HashSet<string>> GetExistingSourceRowHashesAsync(
        IEnumerable<string> hashes);
+        Task<Transaction?> GetByIdAsync(string id);
+        Task<Transaction?> UpdateAsync(string id, Transaction transaction);
+        Task<bool> DeleteAsync(string id);
     }
 }

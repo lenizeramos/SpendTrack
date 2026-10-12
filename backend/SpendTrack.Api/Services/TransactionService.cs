@@ -134,5 +134,23 @@ namespace SpendTrack.Api.Services
         {
             return _repository.GetAllAsync();
         }
+
+        public async Task<Transaction?> UpdateTransactionAsync(string id, string description)
+        {
+            var existing = await _repository.GetByIdAsync(id);
+
+            if (existing is null)
+                return null;
+
+            existing.Description = description;
+            existing.UpdatedAt = DateTime.UtcNow;
+
+            return await _repository.UpdateAsync(id, existing);
+        }
+
+        public Task<bool> DeleteTransactionAsync(string id)
+        {
+            return _repository.DeleteAsync(id);
+        }
     }
 }
