@@ -9,16 +9,11 @@ import {
   Title,
   Alert,
 } from "@mantine/core";
-import { useTestQuery, useAddTransactionMutation } from "./services/api";
+import { useAddTransactionMutation } from "./services/api";
 import { FileUpload } from "./components/FileUpload";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
-  const {
-    data: testData,
-    error: testError,
-    isLoading: testLoading,
-  } = useTestQuery();
-
   const [description, setDescription] = useState("");
 
   const [addTransaction, { data, error, isLoading }] =
@@ -42,34 +37,10 @@ function App() {
     }
   };
 
-  if (testLoading) {
-    return (
-      <Container size="sm" py="xl">
-        <Text>Loading...</Text>
-      </Container>
-    );
-  }
-
-  if (testError) {
-    console.error(testError);
-
-    return (
-      <Container size="sm" py="xl">
-        <Alert color="red" title="Connection Error">
-          Backend connection failed
-        </Alert>
-      </Container>
-    );
-  }
-
   return (
     <Container size="sm" py="xl">
       <Stack gap="lg">
         <Title order={1}>Frontend → Backend</Title>
-
-        <Text>
-          Backend says: <strong>{testData}</strong>
-        </Text>
 
         <Paper withBorder p="lg" radius="md">
           <form onSubmit={handleSubmit}>
@@ -111,6 +82,7 @@ function App() {
             console.log("CSV uploaded successfully");
           }}
         />
+        <Dashboard />
       </Stack>
     </Container>
   );

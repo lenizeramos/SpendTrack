@@ -3,7 +3,15 @@ export type Transaction = {
   date: string;
   description: string;
   amount: number;
-  category: string;
+  notes?: string | null;
+
+  createdAt?: string;
+  updatedAt?: string;
+
+  sourceBank?: string | null;
+  parserVersion?: number | null;
+  lowConfidence: boolean;
+  sourceRowHash?: string | null;
 };
 
 export type CreateTransactionRequest = {

@@ -129,5 +129,10 @@ namespace SpendTrack.Api.Services
                 TotalCount = transactionList.Count
             };
         }
+
+        public Task<List<Transaction>> GetAllAsync()
+        {
+            return _repository.GetAllAsync();
+        }
     }
 }

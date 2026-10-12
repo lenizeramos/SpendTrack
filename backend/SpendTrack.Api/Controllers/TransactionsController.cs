@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SpendTrack.Api.Services;
 using SpendTrack.Api.DTOs;
+using SpendTrack.Api.Entities;
 
 namespace SpendTrack.Api.Controllers
 {
@@ -16,10 +17,12 @@ namespace SpendTrack.Api.Controllers
             _service = service;
             _csvParser = csvParser;
         }
-        [HttpGet("test")]
-        public IActionResult Test()
+        [HttpGet]
+        public async Task<ActionResult<List<Transaction>>> GetAll()
         {
-            return Ok("Hello World!");
+            var transactions = await _service.GetAllAsync();
+
+            return Ok(transactions);
         }
 
         [HttpPost]
