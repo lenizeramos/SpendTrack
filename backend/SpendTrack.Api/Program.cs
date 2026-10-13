@@ -12,6 +12,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSingleton<MongoDbContext>();
 
 builder.Services.AddSingleton<IBankCsvParser, TdCsvParser>();
+builder.Services.AddSingleton<IBankCsvParser, PcCsvParser>();
 
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
