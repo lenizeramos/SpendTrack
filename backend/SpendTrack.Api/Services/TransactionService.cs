@@ -130,9 +130,9 @@ namespace SpendTrack.Api.Services
             };
         }
 
-        public Task<List<Transaction>> GetAllAsync()
+        public Task<PagedResult<Transaction>> GetAllAsync(TransactionQueryParameters query)
         {
-            return _repository.GetAllAsync();
+            return _repository.GetAllAsync(query);
         }
 
         public async Task<Transaction?> UpdateTransactionAsync(string id, string description)

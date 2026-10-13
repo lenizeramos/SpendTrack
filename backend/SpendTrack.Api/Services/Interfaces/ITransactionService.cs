@@ -8,7 +8,7 @@ namespace SpendTrack.Api.Services
         Task<Transaction> AddTransactionAsync(string description);
         Task<ImportTransactionsResult> ImportTransactionsAsync(IEnumerable<Transaction> transactions,
             bool confirmImport = false, List<int>? excludedIndexes = null);
-        Task<List<Transaction>> GetAllAsync();
+        Task<PagedResult<Transaction>> GetAllAsync(TransactionQueryParameters query);
         Task<Transaction?> UpdateTransactionAsync(string id, string description);
         Task<bool> DeleteTransactionAsync(string id);
     }

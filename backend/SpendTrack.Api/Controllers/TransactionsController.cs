@@ -18,9 +18,9 @@ namespace SpendTrack.Api.Controllers
             _csvParser = csvParser;
         }
         [HttpGet]
-        public async Task<ActionResult<List<Transaction>>> GetAll()
+        public async Task<ActionResult<PagedResult<Transaction>>> GetAll([FromQuery] TransactionQueryParameters query)
         {
-            var transactions = await _service.GetAllAsync();
+            var transactions = await _service.GetAllAsync(query);
 
             return Ok(transactions);
         }

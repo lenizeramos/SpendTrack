@@ -5,6 +5,8 @@ import type {
   UploadTransactionsRequest,
   ImportTransactionsResult,
   Transaction,
+  TransactionQueryParameters,
+  PagedResult,
 } from "../types/transaction";
 
 export const api = createApi({
@@ -14,8 +16,14 @@ export const api = createApi({
   }),
   tagTypes: ["Transaction"],
   endpoints: (builder) => ({
-    getTransactions: builder.query<Transaction[], void>({
-      query: () => "/transactions",
+    getTransactions: builder.query<
+      PagedResult<Transaction>,
+      TransactionQueryParameters | void
+    >({
+      query: (params) => ({
+        url: "/transactions",
+        params: params ?? {},
+      }),
       providesTags: ["Transaction"],
     }),
 

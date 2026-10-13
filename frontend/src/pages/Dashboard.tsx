@@ -6,6 +6,8 @@ import {
   Group,
   Loader,
   Modal,
+  Pagination,
+  Select,
   Stack,
   Table,
   Text,
@@ -13,10 +15,14 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
+  LuArrowDown,
+  LuArrowUp,
   LuCircleAlert,
   LuCircleCheckBig,
   LuPencil,
+  LuSearch,
   LuTrash2,
+  LuX,
 } from "react-icons/lu";
 import {
   useGetTransactionsQuery,
@@ -24,14 +30,33 @@ import {
   useDeleteTransactionMutation,
 } from "../services/api";
 import { currencyFormatter, formatDate } from "../utils/formatTransaction";
-import type { Transaction } from "../types/transaction";
+import type {
+  Transaction,
+  TransactionQueryParameters,
+} from "../types/transaction";
+
+const PAGE_SIZE_OPTIONS = ["5", "10", "20", "50"];
 
 export default function Dashboard() {
-  const {
-    data: transactions = [],
-    isLoading,
-    isError,
-  } = useGetTransactionsQuery();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [sortBy, setSortBy] = useState<"date" | "description" | "amount">(
+    "date",
+  );
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+
+  const queryParams: TransactionQueryParameters = {
+    page,
+    pageSize,
+    search: search || undefined,
+    sortBy,
+    sortDir,
+  };
+
+  const { data, isLoading, isFetching, isError } =
+    useGetTransactionsQuery(queryParams);
 
   const [updateTransaction, { isLoading: isUpdating }] =
     useUpdateTransactionMutation();
@@ -44,11 +69,36 @@ export default function Dashboard() {
 
   const [deleting, setDeleting] = useState<Transaction | null>(null);
 
+  const transactions = data?.items ?? [];
+  const totalPages = data?.totalPages ?? 0;
+  const totalCount = data?.totalCount ?? 0;
+
   if (isLoading) return <Loader />;
 
   if (isError) {
     return <Alert color="red">Failed to load transactions.</Alert>;
   }
+
+  const toggleSort = (field: "date" | "description" | "amount") => {
+    if (sortBy === field) {
+      setSortDir((current) => (current === "asc" ? "desc" : "asc"));
+    } else {
+      setSortBy(field);
+      setSortDir("asc");
+    }
+    setPage(1);
+  };
+
+  const handleSearchSubmit = () => {
+    setSearch(searchInput.trim());
+    setPage(1);
+  };
+
+  const handlePageSizeChange = (value: string | null) => {
+    if (!value) return;
+    setPageSize(Number(value));
+    setPage(1);
+  };
 
   const openEdit = (transaction: Transaction) => {
     setEditing(transaction);
@@ -61,15 +111,6 @@ export default function Dashboard() {
     setEditing(null);
     setEditDescription("");
     setEditError("");
-  };
-
-  const openDelete = (transaction: Transaction) => {
-    setDeleting(transaction);
-  };
-
-  const closeDelete = () => {
-    if (isDeleting) return;
-    setDeleting(null);
   };
 
   const handleEdit = async () => {
@@ -115,6 +156,13 @@ export default function Dashboard() {
     }
   };
 
+  const openDelete = (transaction: Transaction) => setDeleting(transaction);
+
+  const closeDelete = () => {
+    if (isDeleting) return;
+    setDeleting(null);
+  };
+
   const handleDelete = async () => {
     if (!deleting?.id) return;
 
@@ -129,6 +177,10 @@ export default function Dashboard() {
       });
 
       setDeleting(null);
+
+      if (transactions.length === 1 && page > 1) {
+        setPage((current) => current - 1);
+      }
     } catch (error) {
       console.error("Delete failed", error);
 
@@ -141,16 +193,96 @@ export default function Dashboard() {
     }
   };
 
+  const SortHeader = ({
+    field,
+    label,
+  }: {
+    field: "date" | "description" | "amount";
+    label: string;
+  }) => (
+    <Group
+      gap={4}
+      style={{ cursor: "pointer", userSelect: "none" }}
+      onClick={() => toggleSort(field)}
+    >
+      <Text size="sm" fw={500}>
+        {label}
+      </Text>
+      {sortBy === field &&
+        (sortDir === "asc" ? (
+          <LuArrowUp size={14} />
+        ) : (
+          <LuArrowDown size={14} />
+        ))}
+    </Group>
+  );
+
   return (
-    <>
-      {" "}
+    <Stack gap="md">
+      <Group justify="space-between" align="flex-end">
+        <Group>
+          <TextInput
+            placeholder="Search description…"
+            value={searchInput}
+            onChange={(event) => {
+              const value = event.currentTarget.value;
+              setSearchInput(value);
+
+              if (value.trim() === "" && search !== "") {
+                setSearch("");
+                setPage(1);
+              }
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") handleSearchSubmit();
+            }}
+            leftSection={<LuSearch size={16} />}
+            rightSection={
+              searchInput ? (
+                <ActionIcon
+                  variant="subtle"
+                  onClick={() => {
+                    setSearchInput("");
+                    setSearch("");
+                    setPage(1);
+                  }}
+                  aria-label="Clear search"
+                >
+                  <LuX size={16} />
+                </ActionIcon>
+              ) : null
+            }
+          />
+          <Button
+            variant="default"
+            disabled={!searchInput.trim()}
+            onClick={handleSearchSubmit}
+          >
+            Search
+          </Button>
+        </Group>
+        <Select
+          data={PAGE_SIZE_OPTIONS}
+          value={String(pageSize)}
+          onChange={handlePageSizeChange}
+          w={120}
+          allowDeselect={false}
+        />
+      </Group>
+
       <Table striped highlightOnHover withTableBorder>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>Date</Table.Th>
-            <Table.Th>Description</Table.Th>
+            <Table.Th>
+              <SortHeader field="date" label="Date" />
+            </Table.Th>
+            <Table.Th>
+              <SortHeader field="description" label="Description" />
+            </Table.Th>
             <Table.Th>Source bank</Table.Th>
-            <Table.Th>Amount</Table.Th>
+            <Table.Th>
+              <SortHeader field="amount" label="Amount" />
+            </Table.Th>
             <Table.Th>Actions</Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -210,11 +342,30 @@ export default function Dashboard() {
 
           {transactions.length === 0 && (
             <Table.Tr>
-              <Table.Td colSpan={5}>No transactions found.</Table.Td>
+              <Table.Td colSpan={5}>
+                <Text ta="center" c="dimmed" py="md">
+                  No transactions found.
+                </Text>
+              </Table.Td>
             </Table.Tr>
           )}
         </Table.Tbody>
       </Table>
+
+      <Group justify="space-between" align="center">
+        <Text size="sm" c="dimmed">
+          {totalCount} transaction{totalCount === 1 ? "" : "s"} total
+          {isFetching ? " · loading…" : ""}
+        </Text>
+
+        <Pagination
+          total={totalPages}
+          value={page}
+          onChange={setPage}
+          withEdges
+        />
+      </Group>
+
       <Modal
         opened={editing !== null}
         onClose={closeEdit}
@@ -244,13 +395,13 @@ export default function Dashboard() {
             <Button variant="default" onClick={closeEdit} disabled={isUpdating}>
               Cancel
             </Button>
-
             <Button onClick={handleEdit} loading={isUpdating}>
               Save changes
             </Button>
           </Group>
         </Stack>
       </Modal>
+
       <Modal
         opened={deleting !== null}
         onClose={closeDelete}
@@ -295,13 +446,12 @@ export default function Dashboard() {
             >
               Cancel
             </Button>
-
             <Button color="red" onClick={handleDelete} loading={isDeleting}>
               Delete transaction
             </Button>
           </Group>
         </Stack>
       </Modal>
-    </>
+    </Stack>
   );
 }

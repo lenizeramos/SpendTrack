@@ -1,4 +1,5 @@
 using SpendTrack.Api.Entities;
+using SpendTrack.Api.DTOs;
 
 namespace SpendTrack.Api.Repositories
 {
@@ -6,7 +7,7 @@ namespace SpendTrack.Api.Repositories
     {
         Task<Transaction> AddAsync(Transaction transaction);
         Task AddManyAsync(IEnumerable<Transaction> transactions);
-        Task<List<Transaction>> GetAllAsync();
+        Task<PagedResult<Transaction>> GetAllAsync(TransactionQueryParameters query);
 
         Task<HashSet<string>> GetExistingSourceRowHashesAsync(
        IEnumerable<string> hashes);

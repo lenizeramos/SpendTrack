@@ -23,6 +23,22 @@ export type UpdateTransactionRequest = {
   description: string;
 };
 
+export type TransactionQueryParameters = {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  sortBy?: "date" | "description" | "amount";
+  sortDir?: "asc" | "desc";
+};
+
+export type PagedResult<T> = {
+  items: T[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+};
+
 export type ImportTransactionsResult = {
   requiresConfirmation: boolean;
   message: string;

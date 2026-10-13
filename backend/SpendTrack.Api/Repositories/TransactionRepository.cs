@@ -2,6 +2,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using SpendTrack.Api.Data;
 using SpendTrack.Api.Entities;
+using SpendTrack.Api.DTOs;
 
 namespace SpendTrack.Api.Repositories
 {
@@ -30,9 +31,49 @@ namespace SpendTrack.Api.Repositories
             await _transactions.InsertManyAsync(transactionList);
         }
 
-        public async Task<List<Transaction>> GetAllAsync()
+        public async Task<PagedResult<Transaction>> GetAllAsync(TransactionQueryParameters query)
         {
-            return await _transactions.Find(FilterDefinition<Transaction>.Empty).ToListAsync();
+            var filterBuilder = Builders<Transaction>.Filter;
+            var filter = filterBuilder.Empty;
+
+            if (!string.IsNullOrWhiteSpace(query.Search))
+            {
+                var search = query.Search.Trim();
+                filter &= filterBuilder.Regex(
+                    t => t.Description,
+                    new BsonRegularExpression(search, "i"));
+            }
+
+            var sortBuilder = Builders<Transaction>.Sort;
+            var sort = query.SortBy.ToLowerInvariant() switch
+            {
+                "description" => query.SortDir.Equals("asc", StringComparison.OrdinalIgnoreCase)
+                    ? sortBuilder.Ascending(t => t.Description)
+                    : sortBuilder.Descending(t => t.Description),
+                "amount" => query.SortDir.Equals("asc", StringComparison.OrdinalIgnoreCase)
+                    ? sortBuilder.Ascending(t => t.Amount)
+                    : sortBuilder.Descending(t => t.Amount),
+                _ => query.SortDir.Equals("asc", StringComparison.OrdinalIgnoreCase)
+                    ? sortBuilder.Ascending(t => t.Date)
+                    : sortBuilder.Descending(t => t.Date),
+            };
+
+            var totalCount = await _transactions.CountDocumentsAsync(filter);
+
+            var items = await _transactions
+                .Find(filter)
+                .Sort(sort)
+                .Skip((query.Page - 1) * query.PageSize)
+                .Limit(query.PageSize)
+                .ToListAsync();
+
+            return new PagedResult<Transaction>
+            {
+                Items = items,
+                TotalCount = (int)totalCount,
+                Page = query.Page,
+                PageSize = query.PageSize,
+            };
         }
 
 
