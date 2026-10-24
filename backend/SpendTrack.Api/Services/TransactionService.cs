@@ -14,12 +14,14 @@ namespace SpendTrack.Api.Services
             _repository = repository;
         }
 
-        public async Task<Transaction> AddTransactionAsync(
-            string description)
+        public async Task<Transaction> AddTransactionAsync(CreateTransactionRequest request)
         {
             var transaction = new Transaction
             {
-                Description = description
+                Description = request.Description,
+                Date = request.Date!.Value,
+                Amount = request.Amount!.Value,
+                Notes = request.Notes
             };
 
             return await _repository.AddAsync(transaction);

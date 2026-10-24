@@ -8,6 +8,8 @@ import {
   Text,
   Modal,
   Group,
+  Title,
+  Paper,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { LuCircleAlert, LuCircleCheckBig, LuUpload } from "react-icons/lu";
@@ -138,140 +140,143 @@ export const FileUpload = ({
   };
 
   return (
-    <Stack gap="sm">
-      <FileInput
-        label="Transaction CSV"
-        placeholder="Choose a CSV file"
-        accept=".csv"
-        value={file}
-        onChange={setFile}
-        clearable
-        disabled={isLoading}
-      />
+    <Paper withBorder p="lg" radius="md">
+      <Stack gap="sm">
+        <Title order={2}>Import Transactions</Title>
+        <FileInput
+          label="Transaction CSV"
+          placeholder="Choose a CSV file"
+          accept=".csv"
+          value={file}
+          onChange={setFile}
+          clearable
+          disabled={isLoading}
+        />
 
-      <Button
-        leftSection={<LuUpload size={16} />}
-        onClick={handleUpload}
-        disabled={!file || isLoading}
-        loading={isLoading}
-      >
-        Import CSV
-      </Button>
+        <Button
+          leftSection={<LuUpload size={16} />}
+          onClick={handleUpload}
+          disabled={!file || isLoading}
+          loading={isLoading}
+        >
+          Import CSV
+        </Button>
 
-      {uploadError && (
-        <Alert color="red" variant="light" icon={<LuCircleAlert size={18} />}>
-          {uploadError}
-        </Alert>
-      )}
-
-      {file && (
-        <Text size="sm" c="dimmed">
-          Selected: {file.name}
-        </Text>
-      )}
-
-      <Modal
-        opened={opened}
-        onClose={() => {
-          if (!isLoading) setOpened(false);
-        }}
-        title="Review before importing"
-        centered
-        size="lg"
-        closeOnClickOutside={!isLoading}
-        closeOnEscape={!isLoading}
-      >
-        <Stack gap="md">
-          <Text size="sm">
-            Your CSV file contains <strong>{totalCount} transactions</strong>.
-            We found <strong>{duplicates.length}</strong> that already exist in
-            your database.
-          </Text>
-
-          <Alert
-            color="blue"
-            variant="light"
-            title="Your file has not been imported yet"
-          >
-            <Stack gap={4}>
-              <Text size="sm">
-                The transactions listed below are the ones that already exist in
-                your database. Select any transaction you want to import again.
-                Unselected transactions will be skipped.
-              </Text>
-              <Text size="sm" mt="sm" fw={500}>
-                When you're ready, click "Import transactions" to upload the
-                file and save your changes.{" "}
-                <strong>
-                  You must click this button to complete the import, even if you
-                  don't select any transactions.
-                </strong>
-              </Text>
-            </Stack>
+        {uploadError && (
+          <Alert color="red" variant="light" icon={<LuCircleAlert size={18} />}>
+            {uploadError}
           </Alert>
+        )}
 
-          <Text size="sm" fw={600}>
-            Transactions already in your database
-          </Text>
-
-          <Stack gap="sm">
-            {duplicates.map(({ index, transaction, reason }) => (
-              <Alert
-                key={index}
-                color="yellow"
-                variant="light"
-                icon={<LuCircleAlert size={18} />}
-              >
-                <Checkbox
-                  checked={selectedIndexes.includes(index)}
-                  onChange={(event) =>
-                    toggleIndex(index, event.currentTarget.checked)
-                  }
-                  label={
-                    <Stack gap={2}>
-                      <Text size="sm" fw={500}>
-                        {transaction.description}
-                      </Text>
-
-                      <Text size="xs" c="dimmed">
-                        Date: {new Date(transaction.date).toLocaleDateString()}
-                      </Text>
-
-                      <Text size="xs" c="dimmed">
-                        Amount: {transaction.amount.toFixed(2)}
-                      </Text>
-
-                      <Text size="xs" c="dimmed">
-                        {reason}
-                      </Text>
-                    </Stack>
-                  }
-                />
-              </Alert>
-            ))}
-          </Stack>
-
+        {file && (
           <Text size="sm" c="dimmed">
-            {selectedIndexes.length} existing transaction(s) selected for
-            import. {duplicates.length - selectedIndexes.length} will be
-            skipped.
+            Selected: {file.name}
           </Text>
+        )}
 
-          <Group justify="flex-end">
-            <Button
-              variant="default"
-              onClick={() => setOpened(false)}
-              disabled={isLoading}
+        <Modal
+          opened={opened}
+          onClose={() => {
+            if (!isLoading) setOpened(false);
+          }}
+          title="Review before importing"
+          centered
+          size="lg"
+          closeOnClickOutside={!isLoading}
+          closeOnEscape={!isLoading}
+        >
+          <Stack gap="md">
+            <Text size="sm">
+              Your CSV file contains <strong>{totalCount} transactions</strong>.
+              We found <strong>{duplicates.length}</strong> that already exist
+              in your database.
+            </Text>
+
+            <Alert
+              color="blue"
+              variant="light"
+              title="Your file has not been imported yet"
             >
-              Cancel
-            </Button>
+              <Stack gap={4}>
+                <Text size="sm">
+                  The transactions listed below are the ones that already exist
+                  in your database. Select any transaction you want to import
+                  again. Unselected transactions will be skipped.
+                </Text>
+                <Text size="sm" mt="sm" fw={500}>
+                  When you're ready, click "Import transactions" to upload the
+                  file and save your changes.{" "}
+                  <strong>
+                    You must click this button to complete the import, even if
+                    you don't select any transactions.
+                  </strong>
+                </Text>
+              </Stack>
+            </Alert>
 
-            <Button onClick={handleConfirm} loading={isLoading}>
-              Import transactions
-            </Button>
-          </Group>
-        </Stack>
-      </Modal>
-    </Stack>
+            <Text size="sm" fw={600}>
+              Transactions already in your database
+            </Text>
+
+            <Stack gap="sm">
+              {duplicates.map(({ index, transaction, reason }) => (
+                <Alert
+                  key={index}
+                  color="yellow"
+                  variant="light"
+                  icon={<LuCircleAlert size={18} />}
+                >
+                  <Checkbox
+                    checked={selectedIndexes.includes(index)}
+                    onChange={(event) =>
+                      toggleIndex(index, event.currentTarget.checked)
+                    }
+                    label={
+                      <Stack gap={2}>
+                        <Text size="sm" fw={500}>
+                          {transaction.description}
+                        </Text>
+
+                        <Text size="xs" c="dimmed">
+                          Date:{new Date(transaction.date).toLocaleDateString()}
+                        </Text>
+
+                        <Text size="xs" c="dimmed">
+                          Amount: {transaction.amount.toFixed(2)}
+                        </Text>
+
+                        <Text size="xs" c="dimmed">
+                          {reason}
+                        </Text>
+                      </Stack>
+                    }
+                  />
+                </Alert>
+              ))}
+            </Stack>
+
+            <Text size="sm" c="dimmed">
+              {selectedIndexes.length} existing transaction(s) selected for
+              import. {duplicates.length - selectedIndexes.length} will be
+              skipped.
+            </Text>
+
+            <Group justify="flex-end">
+              <Button
+                variant="default"
+                onClick={() => setOpened(false)}
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+
+              <Button onClick={handleConfirm} loading={isLoading}>
+                Import transactions
+              </Button>
+            </Group>
+          </Stack>
+        </Modal>
+      </Stack>
+    </Paper>
   );
 };

@@ -16,6 +16,8 @@ export type Transaction = {
 
 export type CreateTransactionRequest = {
   description: string;
+  date: string;
+  amount: number;
 };
 
 export type UpdateTransactionRequest = {

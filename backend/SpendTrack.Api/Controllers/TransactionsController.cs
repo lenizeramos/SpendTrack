@@ -28,7 +28,7 @@ namespace SpendTrack.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddTransaction([FromBody] CreateTransactionRequest request)
         {
-            var transaction = await _service.AddTransactionAsync(request.Description);
+            var transaction = await _service.AddTransactionAsync(request);
 
             return Ok(transaction);
         }
